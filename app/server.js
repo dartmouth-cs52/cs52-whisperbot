@@ -33,7 +33,7 @@ controller.hears(['hello', 'hi', 'howdy'], ['direct_message', 'direct_mention', 
 });
 
 controller.hears(['help'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
-  bot.reply(message, 'Message me and I\'ll post anonymously in #overheards for you...');
+  bot.reply(message, 'Message me with the word \'post\' and I\'ll post anonymously in #overheards for you...');
 });
 
 controller.hears(['post'], ['direct_message'], (bot, message) => {
