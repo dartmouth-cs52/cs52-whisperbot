@@ -6,7 +6,7 @@ const controller = botkit.slackbot({
   debug: false,
 });
 
-const overheardsID = 'C02G9Q62H';
+const generalID = 'C1C55QJJY';
 
 // initialize slackbot
 const slackbot = controller.spawn({
@@ -37,21 +37,20 @@ controller.hears(['hello', 'hi', 'howdy'], ['direct_message', 'direct_mention', 
 });
 
 controller.hears(['help'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
-  bot.reply(message, 'Message me with the word \'post\' and I\'ll post anonymously in #overheards for you...');
+  bot.reply(message, 'Message me with the word \'post\' and I\'ll post anonymously in #general for you...');
 });
 
 controller.hears(['post'], ['direct_message'], (bot, message) => {
   bot.startConversation(message, (err, convo) => {
-    convo.ask('Sure! What do you want to post to overheards?', (response, conversation) => {
+    convo.ask('Sure! What do you want to post to general?', (response, conversation) => {
       bot.say({
         text: response.text,
-        channel: overheardsID,
+        channel: generalID,
       });
-      convo.say('Okay, I just posted: \n' + response.text + '\nto overheards!');
+      convo.say('Okay, I just posted: \n' + response.text + '\nto general!');
       convo.next();
     });
   });
 });
-
 
 console.log('starting bot');
