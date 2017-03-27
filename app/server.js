@@ -22,10 +22,6 @@ controller.setupWebserver(process.env.PORT || 3001, (err, webserver) => {
   });
 });
 
-controller.on('direct_message', (bot, message) => {
-  bot.reply(message, 'What? I didn\'t understand that...');
-});
-
 controller.hears(['hello', 'hi', 'howdy'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.api.users.info({ user: message.user }, (err, res) => {
     if (res) {
@@ -51,6 +47,10 @@ controller.hears(['post'], ['direct_message'], (bot, message) => {
       convo.next();
     });
   });
+});
+
+controller.on('direct_message', (bot, message) => {
+  bot.reply(message, 'What? I didn\'t understand that...');
 });
 
 console.log('starting bot');
