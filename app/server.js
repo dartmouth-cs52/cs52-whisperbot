@@ -10,7 +10,7 @@ const overheardsID = 'C02G9Q62H';
 
 // initialize slackbot
 const slackbot = controller.spawn({
-  token: process.env.WHISPERBOT_TOKEN,
+  token: process.env.CS52_WHISPERBOT_TOKEN,
 }).startRTM(err => {
   if (err) { throw new Error(err); }
 });
