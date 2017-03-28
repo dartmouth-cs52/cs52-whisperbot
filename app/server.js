@@ -5,7 +5,6 @@ import botkit from 'botkit';
 const controller = botkit.slackbot({
   debug: false,
 });
-
 var pubChannels = [];
 var specChannel;
 
@@ -40,9 +39,9 @@ controller.hears(['help'], ['direct_message', 'direct_mention', 'mention'], (bot
 
 controller.hears(['post'], ['direct_message'], (bot, message) => {
   bot.startConversation(message, (err, convo) => {
-    convo.ask('Sure! Where do you want to post? (Don\'t include the # symbol)', (resp, conv) => {
+    convo.ask('Sure! Where do you want to post? (Don\'t include the # symbol)', (response, conversation) => {
       pubChannels.forEach((channel) => {
-        if (channel.name === resp) { specChannel = channel; }
+        if (channel.name === response) { specChannel = channel; }
       });
     });
     convo.ask('Okay! What do you want to post to #' + specChannel.name + '?', (response, conversation) => {
