@@ -6,13 +6,15 @@ const controller = botkit.slackbot({
   debug: false,
 });
 
-const generalID = 'C1C55QJJY';
+var pubChannels = [];
+var specChannel;
 
 // initialize slackbot
 const slackbot = controller.spawn({
   token: process.env.CS52_WHISPERBOT_TOKEN,
-}).startRTM(err => {
+}).startRTM((err, bot, payload) => {
   if (err) { throw new Error(err); }
+  pubChannels = payload.channels;
 });
 
 // prepare webhook
@@ -38,12 +40,17 @@ controller.hears(['help'], ['direct_message', 'direct_mention', 'mention'], (bot
 
 controller.hears(['post'], ['direct_message'], (bot, message) => {
   bot.startConversation(message, (err, convo) => {
-    convo.ask('Sure! What do you want to post to general?', (response, conversation) => {
+    convo.ask('Sure! Where do you want to post? (Don\'t include the # symbol)', (response, conversation) => {
+      pubChannels.forEach((channel) => {
+        if (channel.name === response) { specChannel = channel; }
+      });
+    });
+    convo.ask('Okay! What do you want to post to #' + specChannel.name + '?', (response, conversation) => {
       bot.say({
         text: response.text,
-        channel: generalID,
+        channel: specChannel.id,
       });
-      convo.say('Okay, I just posted: \n' + response.text + '\nto general!');
+      convo.say('Okay, I just posted: \n' + response.text + '\nto #' + specChannel.name + '!');
       convo.next();
     });
   });
