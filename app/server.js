@@ -5,15 +5,16 @@ import botkit from 'botkit';
 const controller = botkit.slackbot({
   debug: false,
 });
-var pubChannels = [];
-var specChannel;
+
+var users = [];
+var dmContact;
 
 // initialize slackbot
 const slackbot = controller.spawn({
   token: process.env.CS52_WHISPERBOT_TOKEN,
 }).startRTM((err, bot, payload) => {
   if (err) { throw new Error(err); }
-  pubChannels = payload.channels;
+  users = payload.users;
 });
 
 // prepare webhook
@@ -39,18 +40,50 @@ controller.hears(['help'], ['direct_message', 'direct_mention', 'mention'], (bot
 
 controller.hears(['post'], ['direct_message'], (bot, message) => {
   bot.startConversation(message, (err, convo) => {
-    convo.ask('Sure! Where do you want to post? (Don\'t include the # symbol)', (response, conversation) => {
-      pubChannels.forEach((channel) => {
-        if (channel.name === response) { specChannel = channel; }
+    convo.ask('Sure! Where do you want to post? (Use a # symbol!)', (response, conversation) => {
+      const channelID = response.text.substring(2, 11);
+      const channelName = response.text.substring(12, response.text.length - 1);
+      convo.next();
+      convo.ask('Okay! What do you want to post to ' + channelName + '?', (resp, conv) => {
+        if (resp.subtype === 'file_share') {
+          bot.say({
+            text: resp.file.url_private,
+            channel: channelID,
+          });
+          convo.say('Okay, I just posted your image to #' + channelName + '!');
+          convo.next();
+        }
+        else {
+          bot.say({
+            text: resp.text,
+            channel: channelID,
+          });
+          convo.say('Okay, I just posted: \n' + resp.text + '\nto #' + channelName + '!');
+          convo.next();
+        }
       });
     });
-    convo.ask('Okay! What do you want to post to #' + specChannel.name + '?', (response, conversation) => {
-      bot.say({
-        text: response.text,
-        channel: specChannel.id,
+  });
+});
+
+controller.hears(['message'], ['direct_message'], (bot, message) => {
+  bot.startConversation(message, (err, convo) => {
+    convo.next();
+    convo.ask('Sure! Who do you want to message? (Be sure to use the @ symbol!)', (response, conversation) => {
+      users.forEach((user) => {
+        if (user.id === response.text.substring(2, 11)) {
+          dmContact = user;
+        }
       });
-      convo.say('Okay, I just posted: \n' + response.text + '\nto #' + specChannel.name + '!');
       convo.next();
+      convo.ask('Okay! What do you want to say to @' + dmContact.name + '?', (resp, conv) => {
+        bot.say({
+          text: resp.text,
+          channel: dmContact.id,
+        });
+        convo.say('Okay, I just messaged:\n' + resp.text + '\nto @' + dmContact.name + '!');
+        convo.next();
+      });
     });
   });
 });
