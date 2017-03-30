@@ -88,6 +88,10 @@ controller.hears(['message'], ['direct_message'], (bot, message) => {
   });
 });
 
+controller.on('direct_mention', (bot, message) => {});
+
+controller.on('mention', (bot, message) => {});
+
 controller.on('direct_message', (bot, message) => {
   bot.reply(message, 'What? I didn\'t understand that...');
 });
