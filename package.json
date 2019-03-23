@@ -5,7 +5,7 @@
   "author": "Adam Rinehouse",
   "main": "app/server.js",
   "scripts": {
-    "wakeup": "curl http://cs52-whisperbot.herokuapp.com",
+    "wakeup": "curl -s http://cs52-whisperbot.herokuapp.com 2>&1 >/dev/null",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app/server.js --exec babel-node",
     "start": "babel-node app/server.js",
