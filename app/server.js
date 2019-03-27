@@ -4,6 +4,7 @@ import botkit from 'botkit';
 // botkit controller
 const controller = botkit.slackbot({
   debug: false,
+  stats_optout: true,
 });
 
 var users = [];
